@@ -24,7 +24,7 @@ def user_input(message):
 
 
 def display_time(start_time, time):
-    print("\nThis took %s seconds." % (time - start_time))
+    print("\nThis took {}s seconds.".format(time - start_time))
 
 
 def get_filters():
