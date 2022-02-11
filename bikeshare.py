@@ -14,15 +14,19 @@ def user_input(message):
     """
     Makes sure that no exception occures when a KeyboardInterrupt is provoced.
     """
-    
+
     try:
         entered = input(message)
     except KeyboardInterrupt:
         print(" Program cancelled.")
         exit()
     return(entered)
-    
-    
+
+
+def display_time(start_time, time):
+    print("\nThis took %s seconds." % (time - start_time))
+
+
 def get_filters():
     """
     Asks user to specify a city, month, and day to analyze.
@@ -35,7 +39,7 @@ def get_filters():
 
     print('Hello! Let\'s explore some US bikeshare data!')
     # TO DO: get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
-    invalid = True 
+    invalid = True
     while invalid:
         city = user_input("Please enter a city (Chicago, New York City, Washington) that you would like to get evaluations from: ").lower()
         if city in ("chicago", "new york city", "washington"):
@@ -44,9 +48,9 @@ def get_filters():
         else:
             print("No valid city was entered. Please try again.")
             invalid = True
-    
+
     # TO DO: get user input for month (all, january, february, ... , june)
-    invalid = True 
+    invalid = True
     while invalid:
         month = user_input("Please enter a month (full word) that you would like to get evaluations from (from January to June).\nAlternatively type \"all\": ").lower()
         if month in months_list:
@@ -54,10 +58,10 @@ def get_filters():
             print("Thank you for the input.\n")
         else:
             print("No valid month was entered. Please try again.")
-            invalid = True 
+            invalid = True
 
     # TO DO: get user input for day of week (all, monday, tuesday, ... sunday)
-    invalid = True 
+    invalid = True
     while invalid:
         day = user_input("Please enter a week day (full word) that you would like to get evaluations from.\nAlternatively type \"all\": ").lower()
         if day in days_list:
@@ -65,8 +69,8 @@ def get_filters():
             invalid = False
         else:
             print("No valid day was entered. Please try again.")
-            invalid = True 
- 
+            invalid = True
+
     print('-'*40)
     return city, month, day
 
@@ -83,23 +87,23 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
         df_original - Pandas DataFrame containing original bike sharing data for illustration at the program's end if the user wishes
     """
-    
+
     filename = CITY_DATA[city]
     df = pd.read_csv(filename)
-    df_original = df.copy() #storing the original DataFrame for illustration 
-    
+    df_original = df.copy() #storing the original DataFrame for illustration
+
     df['Start Time'] = pd.to_datetime(df['Start Time'])
     df['End Time'] = pd.to_datetime(df['Start Time'])
-        
+
     df["Month"] = df["Start Time"].dt.month_name()
     df["Day"] = df["Start Time"].dt.day_name()
-    
+
     if month != "all": #filter the month according the user input
         df = df[df["Month"] == month.title()]
-    
+
     if day != "all": #filter the month according the user input
         df = df[df["Day"] == day.title()]
-    
+
     #print(df.info())
     #print(df.head())
     return df, df_original
@@ -113,26 +117,26 @@ def time_stats(df, month, day):
 
     # TO DO: display the most common month
     #if month is selected by user most common month will not be determined
-    if month == "all": 
+    if month == "all":
         common_month = df["Month"].mode()[0]
         print("The most common month of bike rental is: {}".format(common_month))
     else:
         print("You chose the month {}. Therefore, no month evaluation takes place.".format(month.title()))
-    
+
     # TO DO: display the most common day of week
     #if day is selected by user most common day will not be determined
-    if day == "all": 
+    if day == "all":
         common_day = df["Day"].mode()[0]
         print("The most common day of bike rental is: {}".format(common_day))
     else:
         print("You chose the day {}. Therefore, no day evaluation takes place.".format(day.title()))
-        
+
     # TO DO: display the most common start hour
     df["Hour"] = df["Start Time"].dt.hour
     common_hour = df["Hour"].mode()[0]
     print("The most common hour of bike rental is: between {} o'clock and {} o'clock".format(common_hour, common_hour + 1))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -155,7 +159,7 @@ def station_stats(df):
     common_route = df["Common route"].mode()[0]
     print("The most common route of bike rental is: from {}".format(common_route))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -174,7 +178,7 @@ def trip_duration_stats(df):
     print("The mean travel time is: {:.2f} minutes".format(mean_time))
 
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -187,14 +191,14 @@ def user_stats(df, city):
     # TO DO: Display counts of user types
     user_types = df["User Type"].value_counts()
     print("Count of user types:\n{}\n".format(user_types))
-    
+
     # TO DO: Display counts of gender
     if city == "washington": #washington.csv does not contain person-related information
         gender = "The Washington file does not cantain any gender information."
     else:
-        gender = df["Gender"].value_counts() 
+        gender = df["Gender"].value_counts()
     print("Count of genders:\n{}\n".format(gender))
-    
+
 
     # TO DO: Display earliest, most recent, and most common year of birth
     if city == "washington": #washington.csv does not contain person-related information
@@ -203,36 +207,36 @@ def user_stats(df, city):
         yob = df["Birth Year"].describe()[[1,3,4,5,6,7]]
     print("Year of birth information:\n{}\n".format(yob))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
-    
-    
+
+
 def show_table_original(df_original, city):
     """ Gives the user the chance to check the original DataFrame """
-    
+
     show_df = user_input("\nDo you want to see the first 5 rows of the ORGINAL DataFrame for {}?\nEnter \"yes\" or \"no\": ".format(city.title()))
     i = 0
     while show_df == "yes":
         print(df_original[i:i + 5])
         show_df = user_input("\nDo you want to see 5 more rows?\n")
-        i += 5   
-        
+        i += 5
+
 def show_table(df, city):
     """ Gives the user the chance to check the modified DataFrame """
-    
+
     show_df = user_input("\nDo you want to see the first 5 rows of the MODIFIED (filtered, additional functional columns) DataFrame for {}?\nEnter \"yes\" or \"no\": ".format(city.title()))
     i = 0
     while show_df == "yes":
         print(df[i:i + 5])
         show_df = user_input("\nDo you want to see 5 more rows?\n")
         i += 5
-        
+
 def main():
     while True:
         city, month, day = get_filters() #can be disabled if no data shall be entered for testing purposes
         #city, month, day = "chicago", "february", "all" #can be enabled if no data shall be entered for testing purposes
         df, df_original = load_data(city, month, day)
-        
+
         time_stats(df, month, day)
         station_stats(df)
         trip_duration_stats(df)
@@ -245,7 +249,7 @@ def main():
             break
         else:
             print("\nRestart:")
-        
+
 
 if __name__ == "__main__":
 	main()
