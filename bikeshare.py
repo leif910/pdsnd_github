@@ -1,6 +1,5 @@
 import time
 import pandas as pd
-import numpy as np
 
 CITY_DATA = { 'chicago': 'chicago.csv',
               'new york city': 'new_york_city.csv',
@@ -22,6 +21,10 @@ def user_input(message):
         print(" Program cancelled.")
         exit()
     return(entered)
+
+
+def display_time(start_time, time):
+    print("\nThis took {}s seconds.".format(time - start_time))
 
 
 def get_filters():
@@ -66,7 +69,7 @@ def get_filters():
             invalid = False
         else:
             print("No valid day was entered. Please try again.")
-            invalid = True 
+            invalid = True
 
     print('-'*40)
     return city, month, day
@@ -133,7 +136,7 @@ def time_stats(df, month, day):
     common_hour = df["Hour"].mode()[0]
     print("The most common hour of bike rental is: between {} o'clock and {} o'clock".format(common_hour, common_hour + 1))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -156,7 +159,7 @@ def station_stats(df):
     common_route = df["Common route"].mode()[0]
     print("The most common route of bike rental is: from {}".format(common_route))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -175,7 +178,7 @@ def trip_duration_stats(df):
     print("The mean travel time is: {:.2f} minutes".format(mean_time))
 
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
@@ -204,7 +207,7 @@ def user_stats(df, city):
         yob = df["Birth Year"].describe()[[1,3,4,5,6,7]]
     print("Year of birth information:\n{}\n".format(yob))
 
-    print("\nThis took %s seconds." % (time.time() - start_time))
+    display_time(start_time, time.time())
     print('-'*40)
 
 
